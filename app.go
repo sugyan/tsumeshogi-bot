@@ -77,7 +77,7 @@ func (s *server) handler(w http.ResponseWriter, r *http.Request) {
 					replyMessage = linebot.NewTextMessage("生成に失敗しました\xf0\x9f\x98\xa9")
 				} else {
 					path := strings.Replace(csa.InitialState2(problem), "\n", "/", -1)
-					imageURL := fmt.Sprintf("https://shogi-img.appspot.com/%s/1.png", path)
+					imageURL := fmt.Sprintf("https://shogi-img.appspot.com/%s/simple.png", path)
 					replyMessage = linebot.NewTemplateMessage(
 						"this is template message. Please see in LINE app.",
 						linebot.NewButtonsTemplate(

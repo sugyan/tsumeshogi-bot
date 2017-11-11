@@ -61,24 +61,33 @@ func (s *server) handler(w http.ResponseWriter, r *http.Request) {
 		log.Infof(ctx, "event: %v", event)
 		switch event.Type {
 		case linebot.EventTypeMessage:
-			if _, ok := event.Message.(*linebot.TextMessage); ok {
-				problem := generator.Generate()
-				answerString := ""
-				for _, move := range solver.Solve(problem) {
-					ms, _ := problem.MoveString(move)
-					answerString += ms
-				}
-				path := strings.Replace(csa.InitialState2(problem), "\n", "/", -1)
-				imageURL := fmt.Sprintf("https://shogi-img.appspot.com/%s/1.png", path)
-				replyMessage := linebot.NewTemplateMessage(
-					"this is template message. Please see in LINE app.",
-					linebot.NewButtonsTemplate(
-						imageURL, "", "1手詰の問題です！",
-						linebot.NewURITemplateAction("画像URL", imageURL),
-						linebot.NewPostbackTemplateAction("正解を見る", fmt.Sprintf("正解は %s です！", answerString), ""),
-					),
+			if message, ok := event.Message.(*linebot.TextMessage); ok {
+				var (
+					n            = 1
+					problemType  = generator.ProblemType1
+					replyMessage linebot.Message
 				)
-				_, err := bot.ReplyMessage(event.ReplyToken, replyMessage).WithContext(ctx).Do()
+				if strings.HasPrefix(message.Text, "3手") {
+					n = 3
+					problemType = generator.ProblemType3
+				}
+				problem := generator.Generate(problemType)
+				answer, err := solver.Solve(problem)
+				if err != nil || len(answer) != n {
+					replyMessage = linebot.NewTextMessage("生成に失敗しました\xf0\x9f\x98\xa9")
+				} else {
+					path := strings.Replace(csa.InitialState2(problem), "\n", "/", -1)
+					imageURL := fmt.Sprintf("https://shogi-img.appspot.com/%s/1.png", path)
+					replyMessage = linebot.NewTemplateMessage(
+						"this is template message. Please see in LINE app.",
+						linebot.NewButtonsTemplate(
+							imageURL, "", fmt.Sprintf("%d手詰の問題です！", n),
+							linebot.NewURITemplateAction("画像URL", imageURL),
+							linebot.NewPostbackTemplateAction("正解を見る", fmt.Sprintf("正解は %s です！", strings.Join(answer, " ")), ""),
+						),
+					)
+				}
+				_, err = bot.ReplyMessage(event.ReplyToken, replyMessage).WithContext(ctx).Do()
 				if err != nil {
 					log.Errorf(ctx, "failed to reply message: %v", err.Error())
 				}

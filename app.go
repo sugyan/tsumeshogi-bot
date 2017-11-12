@@ -83,7 +83,7 @@ func (s *server) handler(w http.ResponseWriter, r *http.Request) {
 						linebot.NewButtonsTemplate(
 							imageURL, "", fmt.Sprintf("%d手詰の問題です！", n),
 							linebot.NewURITemplateAction("画像URL", imageURL),
-							linebot.NewPostbackTemplateAction("正解を見る", fmt.Sprintf("正解は %s です！", strings.Join(answer, " ")), ""),
+							linebot.NewPostbackTemplateAction("正解を見る", fmt.Sprintf("正解は…\n%s です！", strings.Join(answer, " ")), ""),
 						),
 					)
 				}

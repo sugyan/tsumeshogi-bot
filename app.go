@@ -63,25 +63,24 @@ func (s *server) handler(w http.ResponseWriter, r *http.Request) {
 		case linebot.EventTypeMessage:
 			if message, ok := event.Message.(*linebot.TextMessage); ok {
 				var (
-					n            = 1
 					problemType  = generator.ProblemType1
 					replyMessage linebot.Message
 				)
 				if strings.HasPrefix(message.Text, "3手") {
-					n = 3
 					problemType = generator.ProblemType3
 				}
 				problem := generator.Generate(problemType)
 				answer, err := solver.Solve(problem)
-				if err != nil || len(answer) != n {
+				if err != nil || len(answer) != problemType.Steps() {
 					replyMessage = linebot.NewTextMessage("生成に失敗しました\xf0\x9f\x98\xa9")
 				} else {
 					path := strings.Replace(csa.InitialState2(problem), "\n", "/", -1)
 					imageURL := fmt.Sprintf("https://shogi-img.appspot.com/%s/simple.png", path)
+					text := fmt.Sprintf("%d手詰の問題です！", problemType.Steps())
 					replyMessage = linebot.NewTemplateMessage(
-						"this is template message. Please see in LINE app.",
+						text+" LINEアプリでご覧ください",
 						linebot.NewButtonsTemplate(
-							imageURL, "", fmt.Sprintf("%d手詰の問題です！", n),
+							imageURL, "", text,
 							linebot.NewURITemplateAction("画像URL", imageURL),
 							linebot.NewPostbackTemplateAction("正解を見る", fmt.Sprintf("正解は…\n%s です！", strings.Join(answer, " ")), ""),
 						),

@@ -2,3 +2,6 @@ cron:
 - description: generate job
   url: /generate
   schedule: every 1 minutes
+- description: twitter bot
+  url: /tweet
+  schedule: every 1 hours from 09:00 to 21:00

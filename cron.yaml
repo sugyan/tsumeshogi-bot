@@ -4,4 +4,5 @@ cron:
   schedule: every 1 minutes
 - description: twitter bot
   url: /tweet
+  timezone: Asia/Tokyo
   schedule: every 1 hours from 09:00 to 21:00

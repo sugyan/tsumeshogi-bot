@@ -22,12 +22,6 @@ import (
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/urlfetch"
-	// just import only for appengine...
-	_ "github.com/ChimeraCoder/tokenbucket"
-	_ "github.com/azr/backoff"
-	_ "github.com/dustin/go-jsonpointer"
-	_ "github.com/dustin/gojson"
-	_ "github.com/garyburd/go-oauth/oauth"
 )
 
 type config struct {

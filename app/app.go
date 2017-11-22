@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/BurntSushi/toml"
 	"github.com/ChimeraCoder/anaconda"
@@ -207,19 +208,6 @@ func (s *server) tweetProblem(ctx context.Context) error {
 	return nil
 }
 
-// constant values
-const (
-	KindNameProblem = "Problem"
-	StockCount      = 50
-)
-
-type problemEntity struct {
-	State  string   `datastore:"state,noindex"`
-	Type   int      `datastore:"type"`
-	Used   bool     `datastore:"used"`
-	Answer []string `datastore:"answer,noindex"`
-}
-
 func generateAndSave(ctx context.Context, problemType generator.Problem) error {
 	count, err := datastore.NewQuery(KindNameProblem).
 		Filter("type = ", problemType.Steps()).
@@ -238,10 +226,11 @@ func generateAndSave(ctx context.Context, problemType generator.Problem) error {
 		return err
 	}
 	entity := &problemEntity{
-		State:  csa.InitialState2(p),
-		Type:   len(answer),
-		Answer: answer,
-		Used:   false,
+		State:     csa.InitialState2(p),
+		Type:      len(answer),
+		Answer:    answer,
+		Used:      false,
+		CreatedAt: time.Now().Unix(),
 	}
 	key, err := datastore.Put(ctx, datastore.NewIncompleteKey(ctx, KindNameProblem, nil), entity)
 	if err != nil {
@@ -276,6 +265,7 @@ func fetchProblem(ctx context.Context, problemType generator.Problem) (*problemE
 		}
 	} else {
 		entity.Used = true
+		entity.UpdatedAt = time.Now().Unix()
 		_, err = datastore.Put(ctx, key, &entity)
 		if err != nil {
 			return nil, err

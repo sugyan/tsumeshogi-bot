@@ -1,12 +1,13 @@
-package app
+package entity
 
 // constant values
 const (
-	KindNameProblem = "Problem"
-	StockCount      = 50
+	KindNameProblem   = "Problem"
+	ProblemStockCount = 50
 )
 
-type problemEntity struct {
+// Problem type
+type Problem struct {
 	State     string   `datastore:"state,noindex"`
 	Type      int      `datastore:"type"`
 	Used      bool     `datastore:"used"`

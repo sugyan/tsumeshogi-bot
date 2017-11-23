@@ -6,4 +6,4 @@ if ! command -v gcloud > /dev/null; then
     exit 1
 fi
 
-GOPATH=$(pwd)/gopath gcloud app deploy app
+GOPATH=$(pwd)/gopath:$(PWD)/gopath/vendor gcloud app deploy app

@@ -12,39 +12,26 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BurntSushi/toml"
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/sugyan/shogi/format/csa"
 	"github.com/sugyan/shogi/logic/problem/generator"
 	"github.com/sugyan/shogi/logic/problem/solver"
 	"github.com/sugyan/shogi/util/image"
+	"github.com/sugyan/tsumeshogi_bot/config"
+	"github.com/sugyan/tsumeshogi_bot/entity"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/urlfetch"
 )
 
-type config struct {
-	LineBot struct {
-		ChannelSecret      string `toml:"channel_secret"`
-		ChannelAccessToken string `toml:"channel_access_token"`
-	} `toml:"line_bot"`
-	TwitterBot struct {
-		ConsumerKey       string `toml:"consumer_key"`
-		ConsumerSecret    string `toml:"consumer_secret"`
-		AccessToken       string `toml:"access_token"`
-		AccessTokenSecret string `toml:"access_token_secret"`
-	} `toml:"twitter_bot"`
-}
-
 type server struct {
-	config config
+	config *config.Config
 }
 
 func init() {
-	var config config
-	_, err := toml.DecodeFile("config.toml", &config)
+	config, err := config.LoadConfig("config.toml")
 	if err != nil {
 		panic(err)
 	}
@@ -209,7 +196,7 @@ func (s *server) tweetProblem(ctx context.Context) error {
 }
 
 func generateAndSave(ctx context.Context, problemType generator.Problem) error {
-	count, err := datastore.NewQuery(KindNameProblem).
+	count, err := datastore.NewQuery(entity.KindNameProblem).
 		Filter("type = ", problemType.Steps()).
 		Filter("used = ", false).
 		Count(ctx)
@@ -217,7 +204,7 @@ func generateAndSave(ctx context.Context, problemType generator.Problem) error {
 		return err
 	}
 	log.Infof(ctx, "type: %v, count: %v", problemType.Steps(), count)
-	if count >= StockCount {
+	if count >= entity.ProblemStockCount {
 		return nil
 	}
 	p := generator.Generate(problemType)
@@ -225,14 +212,14 @@ func generateAndSave(ctx context.Context, problemType generator.Problem) error {
 	if err != nil {
 		return err
 	}
-	entity := &problemEntity{
+	problem := &entity.Problem{
 		State:     csa.InitialState2(p),
 		Type:      len(answer),
 		Answer:    answer,
 		Used:      false,
 		CreatedAt: time.Now().Unix(),
 	}
-	key, err := datastore.Put(ctx, datastore.NewIncompleteKey(ctx, KindNameProblem, nil), entity)
+	key, err := datastore.Put(ctx, datastore.NewIncompleteKey(ctx, entity.KindNameProblem, nil), problem)
 	if err != nil {
 		return err
 	}
@@ -240,14 +227,14 @@ func generateAndSave(ctx context.Context, problemType generator.Problem) error {
 	return nil
 }
 
-func fetchProblem(ctx context.Context, problemType generator.Problem) (*problemEntity, error) {
-	query := datastore.NewQuery(KindNameProblem).
+func fetchProblem(ctx context.Context, problemType generator.Problem) (*entity.Problem, error) {
+	query := datastore.NewQuery(entity.KindNameProblem).
 		Filter("type = ", problemType.Steps())
 	iter := query.
 		Filter("used = ", false).
 		Run(ctx)
-	var entity problemEntity
-	key, err := iter.Next(&entity)
+	var problem entity.Problem
+	key, err := iter.Next(&problem)
 	if err != nil {
 		if err != datastore.Done {
 			return nil, err
@@ -259,17 +246,17 @@ func fetchProblem(ctx context.Context, problemType generator.Problem) (*problemE
 		if count == 0 {
 			return nil, datastore.Done
 		}
-		_, err = query.Offset(rand.Intn(count)).Run(ctx).Next(&entity)
+		_, err = query.Offset(rand.Intn(count)).Run(ctx).Next(&problem)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		entity.Used = true
-		entity.UpdatedAt = time.Now().Unix()
-		_, err = datastore.Put(ctx, key, &entity)
+		problem.Used = true
+		problem.UpdatedAt = time.Now().Unix()
+		_, err = datastore.Put(ctx, key, &problem)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return &entity, nil
+	return &problem, nil
 }

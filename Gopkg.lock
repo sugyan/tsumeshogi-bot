@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "cloud.google.com/go"
+  packages = ["compute/metadata"]
+  revision = "2d3a6656c17a60b0815b7e06ab0be04eacb6e613"
+  version = "v0.16.0"
+
+[[projects]]
   name = "github.com/BurntSushi/toml"
   packages = ["."]
   revision = "b26d9c308763d68093482582cea63d69be07a0f0"
@@ -59,7 +65,7 @@
   branch = "master"
   name = "github.com/sugyan/shogi"
   packages = [".","format/csa","logic/problem/generator","logic/problem/solver","util/image"]
-  revision = "e1cf65d7595a4dc51ed4abb98f1cb0069bccb0ba"
+  revision = "eacd5e0cb0942f372174de75b9405de4f1a3fa51"
 
 [[projects]]
   branch = "master"
@@ -71,17 +77,23 @@
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context","context/ctxhttp"]
-  revision = "9dfe39835686865bff950a07b394c12a98ddc811"
+  revision = "c7086645de248775cbf2373cf5ca4d2fa664b8c1"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/oauth2"
+  packages = [".","google","internal","jws","jwt"]
+  revision = "f95fa95eaa936d9d87489b15d1d18b97c1ba9c28"
 
 [[projects]]
   name = "google.golang.org/appengine"
-  packages = [".","datastore","internal","internal/app_identity","internal/base","internal/datastore","internal/log","internal/modules","internal/remote_api","internal/urlfetch","log","urlfetch"]
+  packages = [".","datastore","internal","internal/app_identity","internal/base","internal/datastore","internal/log","internal/modules","internal/remote_api","internal/urlfetch","internal/user","log","remote_api","urlfetch","user"]
   revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
   version = "v1.0.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8c21b5c81278a9a20ed0bc4a1baae765fbf7e29f4094ae87de11beef07097be2"
+  inputs-digest = "bff550e7b47e5ecbb893f47011d7893a2a27790b567b3703f075f0fc422f2c58"
   solver-name = "gps-cdcl"
   solver-version = 1

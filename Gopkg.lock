@@ -62,10 +62,10 @@
   version = "v2.0.0"
 
 [[projects]]
+  branch = "master"
   name = "github.com/line/line-bot-sdk-go"
   packages = ["linebot"]
-  revision = "3a7d66f5efce6ac202f650134609f9d6d163a640"
-  version = "1.0.0"
+  revision = "623ac37e80265f704e8306a8660345b266acff3a"
 
 [[projects]]
   branch = "master"
@@ -124,6 +124,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2e5b271903be6bd46e2870e548890059d0f2c4679a72b5f9e7947e20249828d6"
+  inputs-digest = "e02ff41e6756f1de3344150ab8cd99c1ffdcc99e7f5ceb544a48e972b4141f30"
   solver-name = "gps-cdcl"
   solver-version = 1

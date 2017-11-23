@@ -47,7 +47,7 @@ func (s *server) callbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event linebot.Event) error {
+func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event *linebot.Event) error {
 	switch event.Type {
 	case linebot.EventTypeMessage:
 		if message, ok := event.Message.(*linebot.TextMessage); ok {
@@ -100,7 +100,21 @@ func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event 
 			return err
 		}
 		replyMessage := linebot.NewTextMessage(fmt.Sprintf("正解は…\n%s です！", strings.Join(answer, " ")))
-		if _, err = bot.ReplyMessage(event.ReplyToken, replyMessage).WithContext(ctx).Do(); err != nil {
+		columns := []*linebot.CarouselColumn{}
+		for i, imageURL := range problem.Images {
+			text := "問題図"
+			if i > 0 {
+				text = answer[i-1]
+			}
+			columns = append(columns, linebot.NewCarouselColumn(
+				imageURL, " ", text, linebot.NewURITemplateAction("画像URL", imageURL),
+			))
+		}
+		carouselMessage := linebot.NewTemplateMessage(
+			"LINEアプリでご覧ください",
+			linebot.NewCarouselTemplate(columns...),
+		)
+		if _, err = bot.ReplyMessage(event.ReplyToken, replyMessage, carouselMessage).WithContext(ctx).Do(); err != nil {
 			return err
 		}
 	}

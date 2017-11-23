@@ -46,10 +46,7 @@ func (s *server) tweetProblem(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	img, err := image.Generate(record.State, &image.StyleOptions{
-		Board: image.BoardStripe,
-		Piece: image.PieceDirty,
-	})
+	img, err := image.Generate(record.State, nil)
 	if err != nil {
 		return err
 	}

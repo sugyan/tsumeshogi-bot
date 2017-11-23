@@ -15,6 +15,7 @@ type Problem struct {
 	CSA       string    `datastore:"csa,noindex"`
 	Type      int       `datastore:"type"`
 	Used      bool      `datastore:"used"`
+	Images    []string  `datastore:"images,noindex"`
 	CreatedAt time.Time `datastore:"created_at"`
 	UpdatedAt time.Time `datastore:"updated_at"`
 }

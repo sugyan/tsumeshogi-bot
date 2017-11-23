@@ -64,22 +64,16 @@ func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event 
 			if problemType == nil {
 				return nil
 			}
-			problem, encodedKey, err := fetchProblem(ctx, problemType)
+			problem, encodedKey, err := s.fetchProblem(ctx, problemType)
 			if err != nil {
 				return err
 			}
-			record, err := csa.Parse(bytes.NewBufferString(problem.CSA))
-			if err != nil {
-				return err
-			}
-			path := strings.Replace(csa.InitialState2(record.State), "\n", "/", -1)
-			imageURL := fmt.Sprintf("https://shogi-img.appspot.com/%s/simple.png", path)
 			text := fmt.Sprintf("%d手詰の問題です！", problemType.Steps())
 			replyMessage = linebot.NewTemplateMessage(
 				text+" LINEアプリでご覧ください",
 				linebot.NewButtonsTemplate(
-					imageURL, "", text,
-					linebot.NewURITemplateAction("画像URL", imageURL),
+					problem.Images[0], "", text,
+					linebot.NewURITemplateAction("画像URL", problem.Images[0]),
 					linebot.NewPostbackTemplateAction(
 						"正解を見る",
 						encodedKey,

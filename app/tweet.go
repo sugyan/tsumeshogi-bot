@@ -38,7 +38,7 @@ func (s *server) tweetProblem(ctx context.Context) error {
 	api := anaconda.NewTwitterApi(s.config.TwitterBot.AccessToken, s.config.TwitterBot.AccessTokenSecret)
 	api.HttpClient.Transport = &urlfetch.Transport{Context: ctx}
 
-	problem, encodedKey, err := fetchProblem(ctx, generator.ProblemType3)
+	problem, encodedKey, err := s.fetchProblem(ctx, generator.ProblemType3)
 	if err != nil {
 		return err
 	}

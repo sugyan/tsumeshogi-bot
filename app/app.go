@@ -16,7 +16,6 @@ import (
 	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/sugyan/shogi/format/csa"
 	"github.com/sugyan/shogi/logic/problem/generator"
-	"github.com/sugyan/shogi/logic/problem/solver"
 	"github.com/sugyan/shogi/util/image"
 	"github.com/sugyan/tsumeshogi_bot/config"
 	"github.com/sugyan/tsumeshogi_bot/entity"
@@ -95,7 +94,7 @@ func (s *server) botHandler(w http.ResponseWriter, r *http.Request) {
 					log.Errorf(ctx, "failed to parse problem string: %v", err)
 					return
 				}
-				path := strings.Replace(csa.InitialState2(problem), "\n", "/", -1)
+				path := strings.Replace(csa.InitialState2(problem.State), "\n", "/", -1)
 				imageURL := fmt.Sprintf("https://shogi-img.appspot.com/%s/simple.png", path)
 				text := fmt.Sprintf("%d手詰の問題です！", problemType.Steps())
 				replyMessage = linebot.NewTemplateMessage(
@@ -121,21 +120,6 @@ func (s *server) botHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				log.Errorf(ctx, "failed to reply message: %v", err.Error())
 			}
-		}
-	}
-}
-
-func (s *server) generateHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
-	log.Infof(ctx, "generate...")
-	for _, problemType := range []generator.Problem{
-		generator.ProblemType1,
-		generator.ProblemType3,
-	} {
-		if err := generateAndSave(ctx, problemType); err != nil {
-			log.Errorf(ctx, "failed to generate: %v", err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
 		}
 	}
 }
@@ -166,7 +150,7 @@ func (s *server) tweetProblem(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	img, err := image.Generate(problem, &image.StyleOptions{
+	img, err := image.Generate(problem.State, &image.StyleOptions{
 		Board: image.BoardStripe,
 		Piece: image.PieceDirty,
 	})
@@ -195,38 +179,6 @@ func (s *server) tweetProblem(ctx context.Context) error {
 	return nil
 }
 
-func generateAndSave(ctx context.Context, problemType generator.Problem) error {
-	count, err := datastore.NewQuery(entity.KindNameProblem).
-		Filter("type = ", problemType.Steps()).
-		Filter("used = ", false).
-		Count(ctx)
-	if err != nil {
-		return err
-	}
-	log.Infof(ctx, "type: %v, count: %v", problemType.Steps(), count)
-	if count >= entity.ProblemStockCount {
-		return nil
-	}
-	p := generator.Generate(problemType)
-	answer, err := solver.Solve(p)
-	if err != nil {
-		return err
-	}
-	problem := &entity.Problem{
-		State:     csa.InitialState2(p),
-		Type:      len(answer),
-		Answer:    answer,
-		Used:      false,
-		CreatedAt: time.Now().Unix(),
-	}
-	key, err := datastore.Put(ctx, datastore.NewIncompleteKey(ctx, entity.KindNameProblem, nil), problem)
-	if err != nil {
-		return err
-	}
-	log.Infof(ctx, "key: %v", key)
-	return nil
-}
-
 func fetchProblem(ctx context.Context, problemType generator.Problem) (*entity.Problem, error) {
 	query := datastore.NewQuery(entity.KindNameProblem).
 		Filter("type = ", problemType.Steps())
@@ -252,7 +204,7 @@ func fetchProblem(ctx context.Context, problemType generator.Problem) (*entity.P
 		}
 	} else {
 		problem.Used = true
-		problem.UpdatedAt = time.Now().Unix()
+		problem.UpdatedAt = time.Now()
 		_, err = datastore.Put(ctx, key, &problem)
 		if err != nil {
 			return nil, err

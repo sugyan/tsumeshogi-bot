@@ -64,8 +64,8 @@
 [[projects]]
   branch = "master"
   name = "github.com/sugyan/shogi"
-  packages = [".","format/csa","logic/problem/generator","logic/problem/solver","util/image"]
-  revision = "eacd5e0cb0942f372174de75b9405de4f1a3fa51"
+  packages = [".","format/csa","logic/problem/generator","logic/problem/solver","record","util/image"]
+  revision = "a9836dbebc762bbf93a3e56f7b2ab4e2771ed0d9"
 
 [[projects]]
   branch = "master"
@@ -94,6 +94,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "bff550e7b47e5ecbb893f47011d7893a2a27790b567b3703f075f0fc422f2c58"
+  inputs-digest = "e452e06e8af88c30d045f38d04b77d7681f9cb875ecda3fe790c7f313370ff77"
   solver-name = "gps-cdcl"
   solver-version = 1

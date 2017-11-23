@@ -1,5 +1,9 @@
 package entity
 
+import (
+	"time"
+)
+
 // constant values
 const (
 	KindNameProblem   = "Problem"
@@ -8,10 +12,11 @@ const (
 
 // Problem type
 type Problem struct {
-	State     string   `datastore:"state,noindex"`
-	Type      int      `datastore:"type"`
-	Used      bool     `datastore:"used"`
-	Answer    []string `datastore:"answer,noindex"`
-	CreatedAt int64    `datastore:"created_at"`
-	UpdatedAt int64    `datastore:"updated_at"`
+	State     string    `datastore:"state,noindex"`
+	Csa       string    `datastore:"csa,noindex"`
+	Type      int       `datastore:"type"`
+	Used      bool      `datastore:"used"`
+	Answer    []string  `datastore:"answer,noindex"`
+	CreatedAt time.Time `datastore:"created_at"`
+	UpdatedAt time.Time `datastore:"updated_at"`
 }

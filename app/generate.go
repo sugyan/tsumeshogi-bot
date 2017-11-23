@@ -16,6 +16,12 @@ import (
 )
 
 func (s *server) generateHandler(w http.ResponseWriter, r *http.Request) {
+	// cron request only
+	if r.Header.Get("X-Appengine-Cron") != "true" {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
 	ctx := appengine.NewContext(r)
 	log.Infof(ctx, "generate...")
 	for _, problemType := range []generator.Problem{
@@ -51,24 +57,14 @@ func generateAndSave(ctx context.Context, problemType generator.Problem) error {
 		State: p,
 		Moves: answer,
 	}
-	answerString, err := p.MoveStrings(answer)
-	if err != nil {
-		return err
-	}
 	problem := &entity.Problem{
-		State: csa.InitialState2(p),
-		Csa: record.ConvertToString(csa.NewConverter(&csa.ConvertOption{
+		CSA: record.ConvertToString(csa.NewConverter(&csa.ConvertOption{
 			InitialState: csa.InitialStateOption2,
 		})),
 		Type:      len(answer),
-		Answer:    answerString,
 		Used:      false,
 		CreatedAt: time.Now(),
 	}
-	key, err := datastore.Put(ctx, datastore.NewIncompleteKey(ctx, entity.KindNameProblem, nil), problem)
-	if err != nil {
-		return err
-	}
-	log.Infof(ctx, "key: %v", key)
-	return nil
+	_, err = datastore.Put(ctx, datastore.NewIncompleteKey(ctx, entity.KindNameProblem, nil), problem)
+	return err
 }

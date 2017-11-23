@@ -12,11 +12,9 @@ const (
 
 // Problem type
 type Problem struct {
-	State     string    `datastore:"state,noindex"`
-	Csa       string    `datastore:"csa,noindex"`
+	CSA       string    `datastore:"csa,noindex"`
 	Type      int       `datastore:"type"`
 	Used      bool      `datastore:"used"`
-	Answer    []string  `datastore:"answer,noindex"`
 	CreatedAt time.Time `datastore:"created_at"`
 	UpdatedAt time.Time `datastore:"updated_at"`
 }

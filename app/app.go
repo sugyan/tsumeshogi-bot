@@ -11,8 +11,8 @@ import (
 	"github.com/sugyan/shogi"
 	"github.com/sugyan/shogi/format/csa"
 	"github.com/sugyan/shogi/logic/problem/generator"
-	"github.com/sugyan/tsumeshogi_bot/config"
-	"github.com/sugyan/tsumeshogi_bot/entity"
+	"github.com/sugyan/tsumeshogi-bot/config"
+	"github.com/sugyan/tsumeshogi-bot/entity"
 	"google.golang.org/appengine/datastore"
 )
 

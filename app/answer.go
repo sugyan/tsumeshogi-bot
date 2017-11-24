@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/sugyan/shogi/format/csa"
-	"github.com/sugyan/tsumeshogi_bot/entity"
+	"github.com/sugyan/tsumeshogi-bot/entity"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
 )

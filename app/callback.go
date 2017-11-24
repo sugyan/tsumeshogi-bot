@@ -99,22 +99,16 @@ func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event 
 		if err != nil {
 			return err
 		}
-		replyMessage := linebot.NewTextMessage(fmt.Sprintf("正解は…\n%s です！", strings.Join(answer, " ")))
-		columns := []*linebot.CarouselColumn{}
-		for i, imageURL := range problem.Images {
-			text := "問題図"
-			if i > 0 {
-				text = answer[i-1]
-			}
-			columns = append(columns, linebot.NewCarouselColumn(
-				imageURL, " ", text, linebot.NewURITemplateAction("画像URL", imageURL),
-			))
-		}
-		carouselMessage := linebot.NewTemplateMessage(
-			"LINEアプリでご覧ください",
-			linebot.NewCarouselTemplate(columns...),
+		text := fmt.Sprintf("正解は…\n%s です！", strings.Join(answer, " "))
+		imageURL := problem.Images[len(problem.Images)-1]
+		replyMessage := linebot.NewTemplateMessage(
+			text,
+			linebot.NewButtonsTemplate(
+				imageURL, "", text,
+				linebot.NewURITemplateAction("画像URL", imageURL),
+			),
 		)
-		if _, err = bot.ReplyMessage(event.ReplyToken, replyMessage, carouselMessage).WithContext(ctx).Do(); err != nil {
+		if _, err = bot.ReplyMessage(event.ReplyToken, replyMessage).WithContext(ctx).Do(); err != nil {
 			return err
 		}
 	}

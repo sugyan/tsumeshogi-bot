@@ -69,8 +69,8 @@ func (s *server) fetchProblem(ctx context.Context, problemType generator.Problem
 		states := []*shogi.State{state.Clone()}
 		for _, move := range record.Moves {
 			state.Apply(move)
-			states = append(states, state.Clone())
 		}
+		states = append(states, state.Clone())
 		images, err := s.uploadImages(ctx, states)
 		if err != nil {
 			return nil, "", err

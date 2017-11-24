@@ -28,7 +28,7 @@ func (s *server) generateHandler(w http.ResponseWriter, r *http.Request) {
 		generator.ProblemType1,
 		generator.ProblemType3,
 	} {
-		if err := generateAndSave(ctx, problemType); err != nil {
+		if err := s.generateAndSave(ctx, problemType); err != nil {
 			log.Errorf(ctx, "failed to generate: %v", err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
@@ -36,7 +36,7 @@ func (s *server) generateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func generateAndSave(ctx context.Context, problemType generator.Problem) error {
+func (s *server) generateAndSave(ctx context.Context, problemType generator.Problem) error {
 	count, err := datastore.NewQuery(entity.KindNameProblem).
 		Filter("type = ", problemType.Steps()).
 		Filter("used = ", false).
@@ -48,21 +48,35 @@ func generateAndSave(ctx context.Context, problemType generator.Problem) error {
 	if count >= entity.ProblemStockCount {
 		return nil
 	}
-	p := generator.Generate(problemType)
-	answer, err := solver.Solve(p)
+	q := generator.Generate(problemType)
+	a, err := solver.Solve(q)
 	if err != nil {
 		return err
 	}
 	record := &record.Record{
-		State: p,
-		Moves: answer,
+		State: q,
+		Moves: a,
+	}
+	state := q.Clone()
+	qImage, err := s.uploadImage(ctx, state, nil)
+	if err != nil {
+		return err
+	}
+	for _, m := range a {
+		state.Apply(m)
+	}
+	aImage, err := s.uploadImage(ctx, state, &a[len(a)-1].Dst)
+	if err != nil {
+		return err
 	}
 	problem := &entity.Problem{
 		CSA: record.ConvertToString(csa.NewConverter(&csa.ConvertOption{
 			InitialState: csa.InitialStateOption2,
 		})),
-		Type:      len(answer),
+		Type:      len(a),
 		Used:      false,
+		QImage:    qImage,
+		AImage:    aImage,
 		CreatedAt: time.Now(),
 	}
 	_, err = datastore.Put(ctx, datastore.NewIncompleteKey(ctx, entity.KindNameProblem, nil), problem)

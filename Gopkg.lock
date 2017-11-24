@@ -71,7 +71,7 @@
   branch = "master"
   name = "github.com/sugyan/shogi"
   packages = [".","format/csa","logic/problem/generator","logic/problem/solver","record","util/image"]
-  revision = "f866fc560b2494495b41f3bfb6fa40dcdbafbdb6"
+  revision = "89da75f95de4ce6290242576164b7d9fd5e0a622"
 
 [[projects]]
   branch = "master"

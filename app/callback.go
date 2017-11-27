@@ -11,6 +11,7 @@ import (
 	"github.com/sugyan/shogi/format/csa"
 	"github.com/sugyan/shogi/logic/problem/generator"
 	"google.golang.org/appengine"
+	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/urlfetch"
 )
@@ -72,8 +73,8 @@ func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event 
 			replyMessage = linebot.NewTemplateMessage(
 				text+" LINEアプリでご覧ください",
 				linebot.NewButtonsTemplate(
-					problem.Images[0], "", text,
-					linebot.NewURITemplateAction("画像URL", problem.Images[0]),
+					problem.QImage, "", text,
+					linebot.NewURITemplateAction("画像URL", problem.QImage),
 					linebot.NewPostbackTemplateAction(
 						"正解を見る",
 						encodedKey,
@@ -87,28 +88,47 @@ func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event 
 			}
 		}
 	case linebot.EventTypePostback:
-		problem, err := getProblem(ctx, event.Postback.Data)
+		var replyMessage linebot.Message
+		s := strings.Split(event.Postback.Data, ":")
+		encoded := s[0]
+		problem, key, err := getProblem(ctx, encoded)
 		if err != nil {
 			return err
 		}
-		record, err := csa.Parse(bytes.NewBufferString(problem.CSA))
-		if err != nil {
-			return err
+		if len(s) == 1 {
+			record, err := csa.Parse(bytes.NewBufferString(problem.CSA))
+			if err != nil {
+				return err
+			}
+			answer, err := record.State.MoveStrings(record.Moves)
+			if err != nil {
+				return err
+			}
+			text := fmt.Sprintf("正解は…\n%s です！", strings.Join(answer, " "))
+			replyMessage = linebot.NewTemplateMessage(
+				text,
+				linebot.NewButtonsTemplate(
+					problem.AImage, "", text,
+					linebot.NewPostbackTemplateAction("良問\xf0\x9f\x91\x8d", encoded+":+1", ""),
+					linebot.NewPostbackTemplateAction("悪問\xf0\x9f\x91\x8e", encoded+":-1", ""),
+				),
+			)
+		} else {
+			emoticon := ""
+			switch s[1] {
+			case "+1":
+				problem.Score++
+				emoticon = "\xf0\x9f\x98\x8a"
+			case "-1":
+				problem.Score--
+				emoticon = "\xf0\x9f\x98\x94"
+			}
+			if _, err := datastore.Put(ctx, key, problem); err != nil {
+				return err
+			}
+			replyMessage = linebot.NewTextMessage("フィードバックありがとうございます" + emoticon)
 		}
-		answer, err := record.State.MoveStrings(record.Moves)
-		if err != nil {
-			return err
-		}
-		text := fmt.Sprintf("正解は…\n%s です！", strings.Join(answer, " "))
-		imageURL := problem.Images[len(problem.Images)-1]
-		replyMessage := linebot.NewTemplateMessage(
-			text,
-			linebot.NewButtonsTemplate(
-				imageURL, "", text,
-				linebot.NewURITemplateAction("画像URL", imageURL),
-			),
-		)
-		if _, err = bot.ReplyMessage(event.ReplyToken, replyMessage).WithContext(ctx).Do(); err != nil {
+		if _, err := bot.ReplyMessage(event.ReplyToken, replyMessage).WithContext(ctx).Do(); err != nil {
 			return err
 		}
 	}

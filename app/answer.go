@@ -16,7 +16,7 @@ func (s *server) answerHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	encodedKey := strings.TrimPrefix(r.URL.Path, "/answer/")
-	problem, err := getProblem(ctx, encodedKey)
+	problem, _, err := getProblem(ctx, encodedKey)
 	if err != nil {
 		log.Infof(ctx, "failed to get problem: %v", err.Error())
 		http.NotFound(w, r)

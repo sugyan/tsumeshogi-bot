@@ -1,0 +1,6 @@
+indexes:
+- kind: Problem
+  properties:
+  - name: type
+  - name: score
+    direction: desc

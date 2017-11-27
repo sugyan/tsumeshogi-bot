@@ -77,6 +77,7 @@ func (s *server) generateAndSave(ctx context.Context, problemType generator.Prob
 		Used:      false,
 		QImage:    qImage,
 		AImage:    aImage,
+		Score:     0,
 		CreatedAt: time.Now(),
 	}
 	_, err = datastore.Put(ctx, datastore.NewIncompleteKey(ctx, entity.KindNameProblem, nil), problem)

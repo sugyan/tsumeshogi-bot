@@ -37,7 +37,8 @@ func (s *server) answerHandler(w http.ResponseWriter, r *http.Request) {
 	<title>詰将棋BOT</title>
   </head>
   <body>
-` + fmt.Sprintf("正解は、 %s です！", strings.Join(answer, " ")) + `
+    <p>` + fmt.Sprintf("正解は、 %s です！", strings.Join(answer, " ")) + `</p>
+    <img style="max-width: 100%;" src="` + problem.AImage + `">
   </body>
 </html>`
 	w.Header().Add("Content-Type", "text/html; charset=utf-8")

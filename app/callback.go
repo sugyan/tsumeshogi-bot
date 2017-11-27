@@ -109,24 +109,19 @@ func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event 
 				text,
 				linebot.NewButtonsTemplate(
 					problem.AImage, "", text,
-					linebot.NewPostbackTemplateAction("良問\xf0\x9f\x91\x8d", encoded+":+1", ""),
-					linebot.NewPostbackTemplateAction("悪問\xf0\x9f\x91\x8e", encoded+":-1", ""),
+					linebot.NewPostbackTemplateAction("いいね \xf0\x9f\x91\x8d", encoded+":+1", ""),
+					linebot.NewMessageTemplateAction("もう1問！", fmt.Sprintf("%d手詰", problem.Type)),
 				),
 			)
 		} else {
-			emoticon := ""
 			switch s[1] {
 			case "+1":
 				problem.Score++
-				emoticon = "\xf0\x9f\x98\x8a"
-			case "-1":
-				problem.Score--
-				emoticon = "\xf0\x9f\x98\x94"
 			}
 			if _, err := datastore.Put(ctx, key, problem); err != nil {
 				return err
 			}
-			replyMessage = linebot.NewTextMessage("フィードバックありがとうございます" + emoticon)
+			replyMessage = linebot.NewTextMessage("フィードバックありがとうございます\xf0\x9f\x98\x8a")
 		}
 		if _, err := bot.ReplyMessage(event.ReplyToken, replyMessage).WithContext(ctx).Do(); err != nil {
 			return err

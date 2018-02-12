@@ -104,10 +104,10 @@
   revision = "068431dcab1a5817548dd244d9795788a98329f4"
 
 [[projects]]
+  branch = "master"
   name = "google.golang.org/appengine"
   packages = [".","datastore","internal","internal/app_identity","internal/base","internal/datastore","internal/log","internal/modules","internal/remote_api","internal/urlfetch","internal/user","log","remote_api","urlfetch","user"]
-  revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
-  version = "v1.0.0"
+  revision = "5bee14b453b4c71be47ec1781b0fa61c2ea182db"
 
 [[projects]]
   branch = "master"
@@ -124,6 +124,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f411e20bc4fdd66ae6c510f1357d5ff7f3e0bd348615492d207a3446b6811496"
+  inputs-digest = "01b4777b94b442bfb4a74254676c80afc87169e80d4574259ac51eb778fd85e0"
   solver-name = "gps-cdcl"
   solver-version = 1

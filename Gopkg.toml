@@ -38,5 +38,5 @@
   name = "github.com/sugyan/shogi"
 
 [[constraint]]
+  branch = "master"
   name = "google.golang.org/appengine"
-  version = "1.0.0"

@@ -25,8 +25,8 @@ func (s *server) generateHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	log.Infof(ctx, "generate...")
 	for _, problemType := range []generator.Problem{
-		generator.ProblemType1,
-		generator.ProblemType3,
+		generator.Type1,
+		generator.Type3,
 	} {
 		if err := s.generateAndSave(ctx, problemType); err != nil {
 			log.Errorf(ctx, "failed to generate: %v", err)
@@ -49,10 +49,7 @@ func (s *server) generateAndSave(ctx context.Context, problemType generator.Prob
 		return nil
 	}
 	q := generator.Generate(problemType)
-	a, err := solver.Solve(q)
-	if err != nil {
-		return err
-	}
+	a := solver.Solve(q)
 	record := &record.Record{
 		State: q,
 		Moves: a,

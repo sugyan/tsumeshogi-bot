@@ -4,8 +4,8 @@
 [[projects]]
   name = "cloud.google.com/go"
   packages = ["compute/metadata","iam","internal","internal/optional","internal/version","storage"]
-  revision = "2d3a6656c17a60b0815b7e06ab0be04eacb6e613"
-  version = "v0.16.0"
+  revision = "767c40d6a2e058483c25fa193e963a22da17236d"
+  version = "v0.18.0"
 
 [[projects]]
   name = "github.com/BurntSushi/toml"
@@ -50,10 +50,10 @@
   revision = "4cff9ef7b7003713efa191899dbaab8fa75e3e73"
 
 [[projects]]
-  branch = "master"
   name = "github.com/golang/protobuf"
   packages = ["proto","protoc-gen-go/descriptor","ptypes","ptypes/any","ptypes/duration","ptypes/timestamp"]
-  revision = "1e59b77b52bf8e4b449a57e6f79f21226d571845"
+  revision = "925541529c1fa6821df4e44ce2723319eb2be768"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/googleapis/gax-go"
@@ -65,43 +65,43 @@
   branch = "master"
   name = "github.com/line/line-bot-sdk-go"
   packages = ["linebot"]
-  revision = "623ac37e80265f704e8306a8660345b266acff3a"
+  revision = "d5719649979e73fbf3551b3f277fd6d8f85c887b"
 
 [[projects]]
   branch = "master"
   name = "github.com/sugyan/shogi"
-  packages = [".","format/csa","logic/problem/generator","logic/problem/solver","record","util/image"]
-  revision = "a7ef13185f057e779c47fd709096fa0fa35e4a43"
+  packages = [".","format/csa","logic/problem","logic/problem/generator","logic/problem/solver","logic/problem/solver/dfpn","logic/problem/solver/node","record","util/image"]
+  revision = "678da9a5f27f584cb42eccf76cb009eca832d845"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/image"
   packages = ["draw","font","font/basicfont","font/inconsolata","font/plan9font","math/f64","math/fixed"]
-  revision = "f7e31b4ea2e3413ab91b4e7d2dc83e5f8d19a44c"
+  revision = "12117c17ca67ffa1ce22e9409f3b0b0a93ac08c7"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context","context/ctxhttp","http2","http2/hpack","idna","internal/timeseries","lex/httplex","trace"]
-  revision = "c7086645de248775cbf2373cf5ca4d2fa664b8c1"
+  revision = "f5dfe339be1d06f81b22525fe34671ee7d2c8904"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/oauth2"
   packages = [".","google","internal","jws","jwt"]
-  revision = "f95fa95eaa936d9d87489b15d1d18b97c1ba9c28"
+  revision = "543e37812f10c46c622c9575afd7ad22f22a12ba"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
   packages = ["collate","collate/build","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
-  revision = "88f656faf3f37f690df1a32515b479415e1a6769"
+  revision = "4e4a3210bb54bb31f6ab2cdca2edcc0b50c420c1"
 
 [[projects]]
   branch = "master"
   name = "google.golang.org/api"
   packages = ["gensupport","googleapi","googleapi/internal/uritemplates","googleapi/transport","internal","iterator","option","storage/v1","transport/http"]
-  revision = "b804618854e387dc7fdd9e50496183ddcbb4b120"
+  revision = "068431dcab1a5817548dd244d9795788a98329f4"
 
 [[projects]]
   name = "google.golang.org/appengine"
@@ -113,17 +113,17 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/api/annotations","googleapis/iam/v1","googleapis/rpc/status"]
-  revision = "7f0da29060c682909f650ad8ed4e515bd74fa12a"
+  revision = "2b5a72b8730b0b16380010cfe5286c42108d88e7"
 
 [[projects]]
   name = "google.golang.org/grpc"
-  packages = [".","balancer","balancer/roundrobin","codes","connectivity","credentials","encoding","grpclb/grpc_lb_v1/messages","grpclog","internal","keepalive","metadata","naming","peer","resolver","resolver/dns","resolver/passthrough","stats","status","tap","transport"]
-  revision = "5a9f7b402fe85096d2e1d0383435ee1876e863d0"
-  version = "v1.8.0"
+  packages = [".","balancer","balancer/base","balancer/roundrobin","codes","connectivity","credentials","encoding","grpclb/grpc_lb_v1/messages","grpclog","internal","keepalive","metadata","naming","peer","resolver","resolver/dns","resolver/passthrough","stats","status","tap","transport"]
+  revision = "6b51017f791ae1cfbec89c52efdf444b13b550ef"
+  version = "v1.9.2"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e02ff41e6756f1de3344150ab8cd99c1ffdcc99e7f5ceb544a48e972b4141f30"
+  inputs-digest = "f411e20bc4fdd66ae6c510f1357d5ff7f3e0bd348615492d207a3446b6811496"
   solver-name = "gps-cdcl"
   solver-version = 1

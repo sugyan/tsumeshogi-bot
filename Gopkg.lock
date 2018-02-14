@@ -71,7 +71,7 @@
   branch = "master"
   name = "github.com/sugyan/shogi"
   packages = [".","format/csa","logic/problem","logic/problem/generator","logic/problem/solver","logic/problem/solver/dfpn","logic/problem/solver/node","record","util/image"]
-  revision = "678da9a5f27f584cb42eccf76cb009eca832d845"
+  revision = "9276993ff3b19d29f650d2bac9f1fed3834691e1"
 
 [[projects]]
   branch = "master"
@@ -101,7 +101,7 @@
   branch = "master"
   name = "google.golang.org/api"
   packages = ["gensupport","googleapi","googleapi/internal/uritemplates","googleapi/transport","internal","iterator","option","storage/v1","transport/http"]
-  revision = "068431dcab1a5817548dd244d9795788a98329f4"
+  revision = "b0284fdf28b5e4d7c9aa5c26e67035437f711304"
 
 [[projects]]
   branch = "master"

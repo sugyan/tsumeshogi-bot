@@ -48,7 +48,7 @@ func (s *server) generateAndSave(ctx context.Context, problemType generator.Prob
 	if count >= entity.ProblemStockCount {
 		return nil
 	}
-	q := generator.Generate(problemType)
+	q, _ := generator.Generate(problemType)
 	a := solver.Solve(q)
 	record := &record.Record{
 		State: q,

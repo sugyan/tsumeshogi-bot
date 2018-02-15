@@ -64,7 +64,7 @@ func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event 
 			if problemType == nil {
 				return nil
 			}
-			problem, encodedKey, err := s.fetchProblem(ctx, problemType)
+			problem, key, err := s.fetchProblem(ctx, problemType)
 			if err != nil {
 				return err
 			}
@@ -76,7 +76,7 @@ func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event 
 					linebot.NewURITemplateAction("画像URL", problem.QImage),
 					linebot.NewPostbackTemplateAction(
 						"正解を見る",
-						encodedKey,
+						key.Encode(),
 						"",
 					),
 				),

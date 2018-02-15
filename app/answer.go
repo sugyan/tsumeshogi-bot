@@ -2,6 +2,7 @@ package app
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -9,6 +10,7 @@ import (
 	"github.com/sugyan/shogi/format/csa"
 	"github.com/sugyan/tsumeshogi-bot/entity"
 	"google.golang.org/appengine"
+	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 )
 
@@ -55,4 +57,16 @@ func answerString(problem *entity.Problem) ([]string, error) {
 		return nil, err
 	}
 	return answer, nil
+}
+
+func getProblem(ctx context.Context, encoded string) (*entity.Problem, *datastore.Key, error) {
+	var problem entity.Problem
+	key, err := datastore.DecodeKey(encoded)
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := datastore.Get(ctx, key, &problem); err != nil {
+		return nil, nil, err
+	}
+	return &problem, key, nil
 }

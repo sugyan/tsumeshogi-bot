@@ -31,9 +31,10 @@ func init() {
 	http.HandleFunc("/callback", server.callbackHandler)
 	http.HandleFunc("/tweet", server.tweetHandler)
 	http.HandleFunc("/answer/", server.answerHandler)
+	http.HandleFunc("/problem", server.problemHandler)
 }
 
-func (s *server) fetchProblem(ctx context.Context, problemType generator.Problem) (*entity.Problem, string, error) {
+func (s *server) fetchProblem(ctx context.Context, problemType generator.Problem) (*entity.Problem, *datastore.Key, error) {
 	query := datastore.NewQuery(entity.KindNameProblem).
 		Filter("type = ", problemType.Steps())
 	iter := query.
@@ -43,14 +44,14 @@ func (s *server) fetchProblem(ctx context.Context, problemType generator.Problem
 	key, err := iter.Next(&problem)
 	if err != nil {
 		if err != datastore.Done {
-			return nil, "", err
+			return nil, nil, err
 		}
 		count, err := query.Count(ctx)
 		if err != nil {
-			return nil, "", err
+			return nil, nil, err
 		}
 		if count == 0 {
-			return nil, "", datastore.Done
+			return nil, nil, datastore.Done
 		}
 		if count > 100 {
 			count = 100
@@ -61,27 +62,15 @@ func (s *server) fetchProblem(ctx context.Context, problemType generator.Problem
 			Run(ctx).
 			Next(&problem)
 		if err != nil {
-			return nil, "", err
+			return nil, nil, err
 		}
 	} else {
 		problem.Used = true
 		problem.UpdatedAt = time.Now()
 		_, err = datastore.Put(ctx, key, &problem)
 		if err != nil {
-			return nil, "", err
+			return nil, nil, err
 		}
-	}
-	return &problem, key.Encode(), nil
-}
-
-func getProblem(ctx context.Context, encoded string) (*entity.Problem, *datastore.Key, error) {
-	var problem entity.Problem
-	key, err := datastore.DecodeKey(encoded)
-	if err != nil {
-		return nil, nil, err
-	}
-	if err := datastore.Get(ctx, key, &problem); err != nil {
-		return nil, nil, err
 	}
 	return &problem, key, nil
 }

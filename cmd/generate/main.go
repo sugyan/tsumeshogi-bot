@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"image/png"
-	golog "log"
+	"log"
 	"strings"
 	"time"
 
@@ -19,7 +19,6 @@ import (
 	"github.com/sugyan/tsumeshogi-bot/entity"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/appengine/datastore"
-	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/remote_api"
 )
 
@@ -30,12 +29,12 @@ type problemGenerator struct {
 func main() {
 	go func() {
 		time.Sleep(time.Minute * 2)
-		golog.Fatal("timeout")
+		log.Fatal("timeout")
 	}()
 
 	config, err := config.LoadConfig("app/config.toml")
 	if err != nil {
-		golog.Fatal(err)
+		log.Fatal(err)
 	}
 	pg := &problemGenerator{
 		config: config,
@@ -47,11 +46,11 @@ func main() {
 		"https://www.googleapis.com/auth/cloud-platform",
 	)
 	if err != nil {
-		golog.Fatal(err)
+		log.Fatal(err)
 	}
 	ctx, err := remote_api.NewRemoteContext(config.Host, client)
 	if err != nil {
-		golog.Fatal(err)
+		log.Fatal(err)
 	}
 
 	for _, problemType := range []generator.Problem{
@@ -59,7 +58,7 @@ func main() {
 		generator.Type3,
 	} {
 		if err := pg.generateProblem(ctx, problemType); err != nil {
-			log.Errorf(ctx, "generate error %d: %v", problemType.Steps(), err)
+			log.Printf("generate error %d: %v", problemType.Steps(), err)
 		}
 	}
 }
@@ -75,7 +74,7 @@ func (pg *problemGenerator) generateProblem(ctx context.Context, problemType gen
 	if count >= entity.ProblemStockCount {
 		return pg.deleteLowScore(ctx, problemType)
 	}
-	log.Infof(ctx, "count: %v", count)
+	log.Printf("type %d: %v", problemType.Steps(), count)
 
 	// generate problem
 	q, score := generator.Generate(problemType)
@@ -168,7 +167,6 @@ func (pg *problemGenerator) deleteLowScore(ctx context.Context, problemType gene
 			break
 		}
 		if err != nil {
-			log.Errorf(ctx, "error %v", err)
 			return err
 		}
 		deleteKeys = append(deleteKeys, key)

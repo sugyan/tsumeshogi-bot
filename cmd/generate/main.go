@@ -109,7 +109,7 @@ func (pg *problemGenerator) generateProblem(ctx context.Context, problemType gen
 		CreatedAt: time.Now(),
 	}
 	key, err := datastore.Put(ctx, datastore.NewIncompleteKey(ctx, entity.KindNameProblem, nil), problem)
-	log.Infof(ctx, "problem %v (%s) saved", key.IntID(), key.Encode())
+	log.Printf("problem %v (%s) saved", key.IntID(), key.Encode())
 	return nil
 }
 

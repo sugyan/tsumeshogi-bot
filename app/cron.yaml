@@ -1,7 +1,4 @@
 cron:
-- description: generate job
-  url: /generate
-  schedule: every 1 minutes
 - description: twitter bot
   url: /tweet
   timezone: Asia/Tokyo

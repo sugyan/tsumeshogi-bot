@@ -29,7 +29,6 @@ func init() {
 		config: config,
 	}
 	http.HandleFunc("/callback", server.callbackHandler)
-	http.HandleFunc("/generate", server.generateHandler)
 	http.HandleFunc("/tweet", server.tweetHandler)
 	http.HandleFunc("/answer/", server.answerHandler)
 }

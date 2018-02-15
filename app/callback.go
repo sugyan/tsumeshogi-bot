@@ -11,7 +11,6 @@ import (
 	"github.com/sugyan/shogi/format/csa"
 	"github.com/sugyan/shogi/logic/problem/generator"
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/urlfetch"
 )
@@ -91,38 +90,26 @@ func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event 
 		var replyMessage linebot.Message
 		s := strings.Split(event.Postback.Data, ":")
 		encoded := s[0]
-		problem, key, err := getProblem(ctx, encoded)
+		problem, _, err := getProblem(ctx, encoded)
 		if err != nil {
 			return err
 		}
-		if len(s) == 1 {
-			record, err := csa.Parse(bytes.NewBufferString(problem.CSA))
-			if err != nil {
-				return err
-			}
-			answer, err := record.State.MoveStrings(record.Moves)
-			if err != nil {
-				return err
-			}
-			text := fmt.Sprintf("正解は…\n%s です！", strings.Join(answer, " "))
-			replyMessage = linebot.NewTemplateMessage(
-				text,
-				linebot.NewButtonsTemplate(
-					problem.AImage, "", text,
-					linebot.NewPostbackTemplateAction("いいね \xf0\x9f\x91\x8d", encoded+":+1", ""),
-					linebot.NewMessageTemplateAction("もう1問！", fmt.Sprintf("%d手詰", problem.Type)),
-				),
-			)
-		} else {
-			switch s[1] {
-			case "+1":
-				problem.Score++
-			}
-			if _, err := datastore.Put(ctx, key, problem); err != nil {
-				return err
-			}
-			replyMessage = linebot.NewTextMessage("フィードバックありがとうございます\xf0\x9f\x98\x8a")
+		record, err := csa.Parse(bytes.NewBufferString(problem.CSA))
+		if err != nil {
+			return err
 		}
+		answer, err := record.State.MoveStrings(record.Moves)
+		if err != nil {
+			return err
+		}
+		text := fmt.Sprintf("正解は…\n%s です！", strings.Join(answer, " "))
+		replyMessage = linebot.NewTemplateMessage(
+			text,
+			linebot.NewButtonsTemplate(
+				problem.AImage, "", text,
+				linebot.NewMessageTemplateAction("もう1問！", fmt.Sprintf("%d手詰", problem.Type)),
+			),
+		)
 		if _, err := bot.ReplyMessage(event.ReplyToken, replyMessage).WithContext(ctx).Do(); err != nil {
 			return err
 		}

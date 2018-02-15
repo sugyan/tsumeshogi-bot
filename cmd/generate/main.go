@@ -28,6 +28,11 @@ type problemGenerator struct {
 }
 
 func main() {
+	go func() {
+		time.Sleep(time.Minute * 2)
+		golog.Fatal("timeout")
+	}()
+
 	config, err := config.LoadConfig("app/config.toml")
 	if err != nil {
 		golog.Fatal(err)

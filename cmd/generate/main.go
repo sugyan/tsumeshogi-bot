@@ -169,6 +169,7 @@ func (pg *problemGenerator) deleteLowScore(ctx context.Context, problemType gene
 		if err != nil {
 			return err
 		}
+		log.Printf("delete %v", key.IntID())
 		deleteKeys = append(deleteKeys, key)
 	}
 	return datastore.DeleteMulti(ctx, deleteKeys)

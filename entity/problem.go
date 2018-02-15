@@ -7,7 +7,7 @@ import (
 // constant values
 const (
 	KindNameProblem   = "Problem"
-	ProblemStockCount = 50
+	ProblemStockCount = 100
 )
 
 // Problem type

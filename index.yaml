@@ -4,3 +4,8 @@ indexes:
   - name: type
   - name: score
     direction: desc
+- kind: Problem
+  properties:
+  - name: type
+  - name: used
+  - name: score

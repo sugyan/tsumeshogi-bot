@@ -68,7 +68,7 @@ func (pg *problemGenerator) generateProblem(ctx context.Context, problemType gen
 		return err
 	}
 	if count >= entity.ProblemStockCount {
-		return nil
+		return pg.deleteLowScore(ctx, problemType)
 	}
 	log.Infof(ctx, "count: %v", count)
 
@@ -147,4 +147,26 @@ func (pg *problemGenerator) uploadImage(ctx context.Context, state *shogi.State,
 	return strings.Join([]string{
 		"https://storage.googleapis.com", bucketName, objectName,
 	}, "/"), nil
+}
+
+func (pg *problemGenerator) deleteLowScore(ctx context.Context, problemType generator.Problem) error {
+	iter := datastore.NewQuery(entity.KindNameProblem).
+		Filter("type = ", problemType.Steps()).
+		Filter("used = ", false).
+		Order("score").
+		Run(ctx)
+	deleteKeys := []*datastore.Key{}
+	for i := 0; i < int(entity.ProblemStockCount*0.1); i++ {
+		var p entity.Problem
+		key, err := iter.Next(&p)
+		if err == datastore.Done {
+			break
+		}
+		if err != nil {
+			log.Errorf(ctx, "error %v", err)
+			return err
+		}
+		deleteKeys = append(deleteKeys, key)
+	}
+	return datastore.DeleteMulti(ctx, deleteKeys)
 }

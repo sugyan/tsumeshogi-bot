@@ -62,10 +62,10 @@
   version = "v2.0.0"
 
 [[projects]]
-  branch = "master"
   name = "github.com/line/line-bot-sdk-go"
   packages = ["linebot"]
-  revision = "d5719649979e73fbf3551b3f277fd6d8f85c887b"
+  revision = "3a7d66f5efce6ac202f650134609f9d6d163a640"
+  version = "1.0.0"
 
 [[projects]]
   branch = "master"
@@ -104,10 +104,10 @@
   revision = "3acc4f94acb5b02441cce6db56fc82a1016eadb4"
 
 [[projects]]
-  branch = "master"
   name = "google.golang.org/appengine"
   packages = [".","datastore","internal","internal/app_identity","internal/base","internal/datastore","internal/log","internal/modules","internal/remote_api","internal/urlfetch","internal/user","log","remote_api","urlfetch","user"]
-  revision = "5bee14b453b4c71be47ec1781b0fa61c2ea182db"
+  revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -124,6 +124,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a5a263f05ddddcb000c4697d99f739546f816902608a6976cfbde3704ab219b3"
+  inputs-digest = "90d2b5b94eaf5ca482b4883706e4e9ebe1a95a83e674b7a61c04bfc0c5f3cab9"
   solver-name = "gps-cdcl"
   solver-version = 1

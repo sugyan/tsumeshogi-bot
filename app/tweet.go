@@ -63,7 +63,8 @@ func (s *server) tweetProblem(ctx context.Context) error {
 	}
 	params := url.Values{}
 	params.Add("media_ids", media.MediaIDString)
-	URL, err := url.Parse("https://" + s.config.Host + "/answer/" + key.Encode())
+	URL, err := url.Parse("https://" + appengine.DefaultVersionHostname(ctx) + "/answer/" + key.Encode())
+
 	if err != nil {
 		return err
 	}

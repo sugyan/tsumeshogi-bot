@@ -27,6 +27,8 @@ func (s *server) problemHandler(w http.ResponseWriter, r *http.Request) {
 		problem, key, err = s.fetchProblem(ctx, generator.Type1)
 	case "3":
 		problem, key, err = s.fetchProblem(ctx, generator.Type3)
+	case "5":
+		problem, key, err = s.fetchProblem(ctx, generator.Type5)
 	default:
 		log.Errorf(ctx, "type '%v' is invalid", t)
 		http.NotFound(w, r)
@@ -45,7 +47,14 @@ func (s *server) problemHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := fmt.Sprintf("'%s\n%s", key.Encode(), record.ConvertToString(csa.NewConverter(nil)))
+	buf := bytes.NewBufferString(fmt.Sprintf("'%s\n", key.Encode()))
+	convertOption := &csa.ConvertOption{
+		InitialState: csa.InitialStateOption1,
+	}
+	if r.URL.Query().Get("short") != "" {
+		convertOption.InitialState = csa.InitialStateOption2
+	}
+	buf.WriteString(record.ConvertToString(csa.NewConverter(convertOption)))
 	w.Header().Add("Content-Type", "text/plain; charset=utf-8")
-	w.Write([]byte(data))
+	w.Write(buf.Bytes())
 }

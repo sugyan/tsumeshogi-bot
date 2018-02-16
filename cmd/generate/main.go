@@ -28,7 +28,7 @@ type problemGenerator struct {
 
 func main() {
 	go func() {
-		time.Sleep(time.Minute * 2)
+		time.Sleep(time.Minute)
 		log.Fatal("timeout")
 	}()
 
@@ -56,6 +56,7 @@ func main() {
 	for _, problemType := range []generator.Problem{
 		generator.Type1,
 		generator.Type3,
+		generator.Type5,
 	} {
 		if err := pg.generateProblem(ctx, problemType); err != nil {
 			log.Printf("generate error %d: %v", problemType.Steps(), err)

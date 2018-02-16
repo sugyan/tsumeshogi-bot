@@ -82,6 +82,7 @@
   revision = "d5719649979e73fbf3551b3f277fd6d8f85c887b"
 
 [[projects]]
+  branch = "master"
   name = "github.com/sugyan/shogi"
   packages = [
     ".",
@@ -94,8 +95,7 @@
     "record",
     "util/image"
   ]
-  revision = "dd5001145d2c69296eae00aa65a1fbb2aa932f66"
-  version = "0.1"
+  revision = "93557c755b2ff1f9ef33d19e882b989982bd6d74"
 
 [[projects]]
   branch = "master"
@@ -124,7 +124,7 @@
     "lex/httplex",
     "trace"
   ]
-  revision = "dc948dff8834a7fe1ca525f8d04e261c2b56e70d"
+  revision = "2e7f24ace30034db6c258ddb329e5236a68c27fa"
 
 [[projects]]
   branch = "master"
@@ -240,6 +240,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e7432ed66793672c2a63d90a7b1aa468affca24468b1791c9228da17528c06e4"
+  inputs-digest = "a5a263f05ddddcb000c4697d99f739546f816902608a6976cfbde3704ab219b3"
   solver-name = "gps-cdcl"
   solver-version = 1

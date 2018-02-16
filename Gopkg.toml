@@ -42,8 +42,8 @@
   name = "github.com/line/line-bot-sdk-go"
 
 [[constraint]]
-  branch = "master"
   name = "github.com/sugyan/shogi"
+  version = "0.1"
 
 [[constraint]]
   branch = "master"

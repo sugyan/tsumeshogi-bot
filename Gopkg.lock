@@ -95,7 +95,7 @@
     "record",
     "util/image"
   ]
-  revision = "93557c755b2ff1f9ef33d19e882b989982bd6d74"
+  revision = "c8bda5b8b6b6a72ffdccb722611161504ccaa7f8"
 
 [[projects]]
   branch = "master"
@@ -124,7 +124,7 @@
     "lex/httplex",
     "trace"
   ]
-  revision = "2e7f24ace30034db6c258ddb329e5236a68c27fa"
+  revision = "cbe0f9307d0156177f9dd5dc85da1a31abc5f2fb"
 
 [[projects]]
   branch = "master"
@@ -139,7 +139,6 @@
   revision = "543e37812f10c46c622c9575afd7ad22f22a12ba"
 
 [[projects]]
-  branch = "master"
   name = "golang.org/x/text"
   packages = [
     "collate",
@@ -157,7 +156,8 @@
     "unicode/norm",
     "unicode/rangetable"
   ]
-  revision = "4e4a3210bb54bb31f6ab2cdca2edcc0b50c420c1"
+  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
+  version = "v0.3.0"
 
 [[projects]]
   branch = "master"
@@ -173,7 +173,7 @@
     "storage/v1",
     "transport/http"
   ]
-  revision = "3acc4f94acb5b02441cce6db56fc82a1016eadb4"
+  revision = "ab90adb3efa287b869ecb698db42f923cc734972"
 
 [[projects]]
   branch = "master"

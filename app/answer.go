@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/sugyan/shogi"
 	"github.com/sugyan/shogi/format/csa"
 	"github.com/sugyan/tsumeshogi-bot/entity"
 	"google.golang.org/appengine"
@@ -24,13 +25,15 @@ func (s *server) answerHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	answer, err := answerString(problem)
+	answer, state, err := generateAnswer(problem)
 	if err != nil {
 		log.Errorf(ctx, "failed to retrieve answer: %v", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-
+	answerImageURL := fmt.Sprintf(
+		"https://shogi-img.appspot.com/%s/answer.png",
+		strings.Join(strings.Split(strings.TrimSpace(csa.InitialState2(state)), "\n"), "/"))
 	html := `<!DOCTYPE html>
 <html>
   <head>
@@ -40,23 +43,29 @@ func (s *server) answerHandler(w http.ResponseWriter, r *http.Request) {
   </head>
   <body>
     <p>` + fmt.Sprintf("正解は、 %s です！", strings.Join(answer, " ")) + `</p>
-    <img style="max-width: 100%;" src="` + problem.AImage + `">
+    <img style="max-width: 100%;" src="` + answerImageURL + `">
   </body>
 </html>`
 	w.Header().Add("Content-Type", "text/html; charset=utf-8")
 	w.Write([]byte(html))
 }
 
-func answerString(problem *entity.Problem) ([]string, error) {
+func generateAnswer(problem *entity.Problem) ([]string, *shogi.State, error) {
 	record, err := csa.Parse(bytes.NewBufferString(problem.CSA))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	answer, err := record.State.MoveStrings(record.Moves)
-	if err != nil {
-		return nil, err
+	answer := []string{}
+	state := record.State.Clone()
+	for _, move := range record.Moves {
+		ms, err := state.MoveString(move)
+		if err != nil {
+			return nil, nil, err
+		}
+		answer = append(answer, ms)
+		state.Apply(move)
 	}
-	return answer, nil
+	return answer, state, nil
 }
 
 func getProblem(ctx context.Context, encoded string) (*entity.Problem, *datastore.Key, error) {

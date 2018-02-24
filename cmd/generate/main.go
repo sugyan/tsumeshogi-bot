@@ -160,7 +160,6 @@ func (pg *problemGenerator) deleteLowScore(ctx context.Context, problemType gene
 		Filter("used = ", false).
 		Order("score").
 		Run(ctx)
-	deleteKeys := []*datastore.Key{}
 	for i := 0; i < int(entity.ProblemStockCount*0.1); i++ {
 		var p entity.Problem
 		key, err := iter.Next(&p)
@@ -171,7 +170,9 @@ func (pg *problemGenerator) deleteLowScore(ctx context.Context, problemType gene
 			return err
 		}
 		log.Printf("delete %v", key.IntID())
-		deleteKeys = append(deleteKeys, key)
+		if err := p.Delete(ctx, key); err != nil {
+			return err
+		}
 	}
-	return datastore.DeleteMulti(ctx, deleteKeys)
+	return nil
 }

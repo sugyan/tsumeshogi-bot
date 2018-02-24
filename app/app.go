@@ -32,6 +32,8 @@ func init() {
 	http.HandleFunc("/tweet", server.tweetHandler)
 	http.HandleFunc("/answer/", server.answerHandler)
 	http.HandleFunc("/problem", server.problemHandler)
+
+	rand.Seed(time.Now().UnixNano())
 }
 
 func (s *server) fetchProblem(ctx context.Context, problemType generator.Problem) (*entity.Problem, *datastore.Key, error) {

@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"image/jpeg"
+	"math/rand"
 	"net/http"
 	"net/url"
 
@@ -38,7 +39,12 @@ func (s *server) tweetProblem(ctx context.Context) error {
 	api := anaconda.NewTwitterApi(s.config.TwitterBot.AccessToken, s.config.TwitterBot.AccessTokenSecret)
 	api.HttpClient.Transport = &urlfetch.Transport{Context: ctx}
 
-	problem, key, err := s.fetchProblem(ctx, generator.Type3)
+	problemType := generator.Type3
+	// 5 steps!
+	if rand.Intn(5) == 0 {
+		problemType = generator.Type5
+	}
+	problem, key, err := s.fetchProblem(ctx, problemType)
 	if err != nil {
 		return err
 	}

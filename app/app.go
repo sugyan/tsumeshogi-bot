@@ -35,40 +35,43 @@ func init() {
 }
 
 func (s *server) fetchProblem(ctx context.Context, problemType generator.Problem) (*entity.Problem, *datastore.Key, error) {
-	query := datastore.NewQuery(entity.KindNameProblem).
-		Filter("type = ", problemType.Steps())
-	iter := query.
-		Filter("used = ", false).
-		Run(ctx)
+	// fetch high scored problems
+	baseQuery := datastore.NewQuery(entity.KindNameProblem).
+		Filter("type = ", problemType.Steps()).
+		Order("-score")
+	candidates := make([]*datastore.Key, 0, 10)
+fetch:
+	for _, used := range []bool{false, true} {
+		iter := baseQuery.Filter("used = ", used).Run(ctx)
+		for {
+			key, err := iter.Next(nil)
+			if err != nil {
+				if err == datastore.Done {
+					continue fetch
+				} else {
+					return nil, nil, err
+				}
+			}
+			candidates = append(candidates, key)
+			if len(candidates) >= 10 {
+				break fetch
+			}
+		}
+	}
+	if len(candidates) == 0 {
+		return nil, nil, datastore.Done
+	}
+	// select from candidates randomly
+	key := candidates[rand.Intn(len(candidates))]
 	var problem entity.Problem
-	key, err := iter.Next(&problem)
-	if err != nil {
-		if err != datastore.Done {
-			return nil, nil, err
-		}
-		count, err := query.Count(ctx)
-		if err != nil {
-			return nil, nil, err
-		}
-		if count == 0 {
-			return nil, nil, datastore.Done
-		}
-		if count > 100 {
-			count = 100
-		}
-		key, err = query.
-			Order("-score").
-			Offset(rand.Intn(count)).
-			Run(ctx).
-			Next(&problem)
-		if err != nil {
-			return nil, nil, err
-		}
-	} else {
+	if err := datastore.Get(ctx, key, &problem); err != nil {
+		return nil, nil, err
+	}
+	// mark as used
+	if !problem.Used {
 		problem.Used = true
 		problem.UpdatedAt = time.Now()
-		_, err = datastore.Put(ctx, key, &problem)
-		if err != nil {
+		if _, err := datastore.Put(ctx, key, &problem); err != nil {
 			return nil, nil, err
 		}
 	}

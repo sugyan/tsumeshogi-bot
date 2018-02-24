@@ -60,6 +60,8 @@ func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event 
 				problemType = generator.Type1
 			case strings.HasPrefix(message.Text, "3手詰"):
 				problemType = generator.Type3
+			case strings.HasPrefix(message.Text, "5手詰"):
+				problemType = generator.Type5
 			}
 			if problemType == nil {
 				return nil

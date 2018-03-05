@@ -95,7 +95,7 @@
     "record",
     "util/image"
   ]
-  revision = "c8bda5b8b6b6a72ffdccb722611161504ccaa7f8"
+  revision = "b35e7da3f52cc5723314cee60b9841fd2bdf7088"
 
 [[projects]]
   branch = "master"
@@ -124,7 +124,7 @@
     "lex/httplex",
     "trace"
   ]
-  revision = "cbe0f9307d0156177f9dd5dc85da1a31abc5f2fb"
+  revision = "22ae77b79946ea320088417e4d50825671d82d57"
 
 [[projects]]
   branch = "master"
@@ -136,7 +136,7 @@
     "jws",
     "jwt"
   ]
-  revision = "543e37812f10c46c622c9575afd7ad22f22a12ba"
+  revision = "2f32c3ac0fa4fb807a0fcefb0b6f2468a0d99bd0"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -173,7 +173,7 @@
     "storage/v1",
     "transport/http"
   ]
-  revision = "ab90adb3efa287b869ecb698db42f923cc734972"
+  revision = "3caa384156365e545aea85c3dca8c95bc666a94d"
 
 [[projects]]
   branch = "master"
@@ -205,7 +205,7 @@
     "googleapis/iam/v1",
     "googleapis/rpc/status"
   ]
-  revision = "2b5a72b8730b0b16380010cfe5286c42108d88e7"
+  revision = "2c5e7ac708aaa719366570dd82bda44541ca2a63"
 
 [[projects]]
   name = "google.golang.org/grpc"

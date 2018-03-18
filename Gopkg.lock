@@ -79,7 +79,7 @@
   branch = "master"
   name = "github.com/line/line-bot-sdk-go"
   packages = ["linebot"]
-  revision = "d5719649979e73fbf3551b3f277fd6d8f85c887b"
+  revision = "d4ced09142ce79e437333846480ab079844787cf"
 
 [[projects]]
   branch = "master"
@@ -95,7 +95,25 @@
     "record",
     "util/image"
   ]
-  revision = "b35e7da3f52cc5723314cee60b9841fd2bdf7088"
+  revision = "855af0aac4f855929726af088198be94d4de2c62"
+
+[[projects]]
+  name = "go.opencensus.io"
+  packages = [
+    "internal",
+    "internal/tagencoding",
+    "plugin/ochttp",
+    "plugin/ochttp/propagation/b3",
+    "plugin/ochttp/propagation/google",
+    "stats",
+    "stats/internal",
+    "stats/view",
+    "tag",
+    "trace",
+    "trace/propagation"
+  ]
+  revision = "52b12e1eb8fdf769ad0bf5fd73a2af9484e6b196"
+  version = "v0.4.0"
 
 [[projects]]
   branch = "master"
@@ -109,7 +127,7 @@
     "math/f64",
     "math/fixed"
   ]
-  revision = "12117c17ca67ffa1ce22e9409f3b0b0a93ac08c7"
+  revision = "f3a9b89b59def9194717c1d0bd4c0d08fa1afa7b"
 
 [[projects]]
   branch = "master"
@@ -124,7 +142,7 @@
     "lex/httplex",
     "trace"
   ]
-  revision = "22ae77b79946ea320088417e4d50825671d82d57"
+  revision = "24dd3780ca4f75fed9f321890729414a4b5d3f13"
 
 [[projects]]
   branch = "master"
@@ -136,7 +154,7 @@
     "jws",
     "jwt"
   ]
-  revision = "2f32c3ac0fa4fb807a0fcefb0b6f2468a0d99bd0"
+  revision = "fdc9e635145ae97e6c2cb777c48305600cf515cb"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -173,7 +191,7 @@
     "storage/v1",
     "transport/http"
   ]
-  revision = "3caa384156365e545aea85c3dca8c95bc666a94d"
+  revision = "c24aa0e5ed34558ea50c016e4fb92c5e9aa69f2c"
 
 [[projects]]
   branch = "master"
@@ -205,7 +223,7 @@
     "googleapis/iam/v1",
     "googleapis/rpc/status"
   ]
-  revision = "2c5e7ac708aaa719366570dd82bda44541ca2a63"
+  revision = "f8c8703595236ae70fdf8789ecb656ea0bcdcf46"
 
 [[projects]]
   name = "google.golang.org/grpc"

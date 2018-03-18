@@ -80,6 +80,7 @@ func (s *server) handleBotEvent(ctx context.Context, bot *linebot.Client, event 
 						"正解を見る",
 						key.Encode(),
 						"",
+						"",
 					),
 				),
 			)

@@ -1,9 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"context"
-	"fmt"
+	"crypto/rand"
+	"encoding/hex"
+	"image/gif"
 	"image/png"
+	"io"
 	"log"
 	"strings"
 	"time"
@@ -84,18 +88,41 @@ func (pg *problemGenerator) generateProblem(ctx context.Context, problemType gen
 		State: q,
 		Moves: a,
 	}
+
 	// generate image
-	state := q.Clone()
-	qImage, err := pg.uploadImage(ctx, state, nil)
-	if err != nil {
-		return err
+	var qImage, aImage, aImage2 string
+	{
+		var b io.Reader
+		s := q.Clone()
+		b, err = generatePNG(s, nil)
+		if err != nil {
+			return err
+		}
+		qImage, err = pg.uploadImage(ctx, b, "png")
+		if err != nil {
+			return err
+		}
+		for _, m := range a {
+			s.Apply(m)
+		}
+		b, err = generatePNG(s, &a[len(a)-1].Dst)
+		if err != nil {
+			return err
+		}
+		aImage, err = pg.uploadImage(ctx, b, "png")
+		if err != nil {
+			return err
+		}
 	}
-	for _, m := range a {
-		state.Apply(m)
-	}
-	aImage, err := pg.uploadImage(ctx, state, &a[len(a)-1].Dst)
-	if err != nil {
-		return err
+	{
+		b, err := generateGIF(q, a)
+		if err != nil {
+			return err
+		}
+		aImage2, err = pg.uploadImage(ctx, b, "gif")
+		if err != nil {
+			return err
+		}
 	}
 	// save
 	problem := &entity.Problem{
@@ -106,6 +133,7 @@ func (pg *problemGenerator) generateProblem(ctx context.Context, problemType gen
 		Used:      false,
 		QImage:    qImage,
 		AImage:    aImage,
+		AImage2:   aImage2,
 		Score:     score,
 		CreatedAt: time.Now(),
 	}
@@ -114,7 +142,7 @@ func (pg *problemGenerator) generateProblem(ctx context.Context, problemType gen
 	return nil
 }
 
-func (pg *problemGenerator) uploadImage(ctx context.Context, state *shogi.State, highlight *shogi.Position) (string, error) {
+func (pg *problemGenerator) uploadImage(ctx context.Context, r io.Reader, ext string) (string, error) {
 	bucketName := pg.config.Host
 	client, err := storage.NewClient(ctx)
 	if err != nil {
@@ -122,11 +150,11 @@ func (pg *problemGenerator) uploadImage(ctx context.Context, state *shogi.State,
 	}
 	defer client.Close()
 
-	objectName := state.Hash()
-	if highlight != nil {
-		objectName += fmt.Sprintf("-%d%d", highlight.File, highlight.Rank)
+	objectName, err := randomHex(20)
+	if err != nil {
+		return "", err
 	}
-	objectName += ".png"
+	objectName += "." + ext
 	w := client.Bucket(bucketName).Object(objectName).NewWriter(ctx)
 	w.ACL = []storage.ACLRule{
 		{
@@ -134,16 +162,11 @@ func (pg *problemGenerator) uploadImage(ctx context.Context, state *shogi.State,
 			Role:   storage.RoleReader,
 		},
 	}
-	w.ContentType = "image/png"
-	img, err := image.Generate(state, &image.StyleOptions{
-		Board:     image.BoardStripe,
-		Piece:     image.PieceDirty,
-		HighLight: highlight,
-	})
+	w.ContentType = "image/" + ext
 	if err != nil {
 		return "", err
 	}
-	if err := png.Encode(w, img); err != nil {
+	if _, err := io.Copy(w, r); err != nil {
 		return "", err
 	}
 	if err := w.Close(); err != nil {
@@ -175,4 +198,40 @@ func (pg *problemGenerator) deleteLowScore(ctx context.Context, problemType gene
 		}
 	}
 	return nil
+}
+
+func randomHex(n int) (string, error) {
+	bytes := make([]byte, n)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
+}
+
+func generatePNG(state *shogi.State, highlight *shogi.Position) (io.Reader, error) {
+	img, err := image.Generate(state, &image.StyleOptions{
+		Board:     image.BoardStripe,
+		Piece:     image.PieceDirty,
+		HighLight: highlight,
+	})
+	if err != nil {
+		return nil, err
+	}
+	buf := bytes.NewBuffer(nil)
+	if err := png.Encode(buf, img); err != nil {
+		return nil, err
+	}
+	return buf, nil
+}
+
+func generateGIF(state *shogi.State, moves []*shogi.Move) (io.Reader, error) {
+	g, err := image.GenerateGIF(state, moves, nil)
+	if err != nil {
+		return nil, err
+	}
+	buf := bytes.NewBuffer(nil)
+	if err := gif.EncodeAll(buf, g); err != nil {
+		return nil, err
+	}
+	return buf, nil
 }

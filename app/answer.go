@@ -31,9 +31,12 @@ func (s *server) answerHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	answerImageURL := fmt.Sprintf(
-		"https://shogi-img.appspot.com/%s/answer.png",
-		strings.Join(strings.Split(strings.TrimSpace(csa.InitialState2(state)), "\n"), "/"))
+	answerImageURL := problem.AImage2
+	if problem.AImage2 == "" {
+		answerImageURL = fmt.Sprintf(
+			"https://shogi-img.appspot.com/%s/answer.png",
+			strings.Join(strings.Split(strings.TrimSpace(csa.InitialState2(state)), "\n"), "/"))
+	}
 	html := `<!DOCTYPE html>
 <html>
   <head>

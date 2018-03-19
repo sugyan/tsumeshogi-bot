@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/pure-min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/kifuforjs.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <script src="/static/js/kifuforjs.js" charset="utf-8"></script>
+    <script>
+      var Kifu = require('Kifu');
+      Kifu.settings = { ImageDirectoryPath: '/static/img/kifu-for-js' };
+      Kifu.load(location.pathname + '.csa', 'board');
+    </script>
+  </head>
+  <body>
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <p>正解は、 {{ .answer }}です！</p>
+      </div>
+      <div class="pure-u-1">
+        <div id="board"></div>
+      </div>
+    </div>
+  </body>
+</html>

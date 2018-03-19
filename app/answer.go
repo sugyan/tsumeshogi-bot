@@ -3,7 +3,6 @@ package app
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -18,39 +17,37 @@ import (
 func (s *server) answerHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
+	csa := false
 	encodedKey := strings.TrimPrefix(r.URL.Path, "/answer/")
+	if strings.HasSuffix(encodedKey, ".csa") {
+		csa = true
+		encodedKey = strings.TrimSuffix(encodedKey, ".csa")
+	}
 	problem, _, err := getProblem(ctx, encodedKey)
 	if err != nil {
 		log.Infof(ctx, "failed to get problem: %v", err.Error())
 		http.NotFound(w, r)
 		return
 	}
-	answer, state, err := generateAnswer(problem)
+	if csa {
+		w.Header().Set("Content-Type", "text/plain")
+		w.Write([]byte(problem.CSA))
+		return
+	}
+	answer, _, err := generateAnswer(problem)
 	if err != nil {
 		log.Errorf(ctx, "failed to retrieve answer: %v", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	answerImageURL := problem.AImage2
-	if problem.AImage2 == "" {
-		answerImageURL = fmt.Sprintf(
-			"https://shogi-img.appspot.com/%s/answer.png",
-			strings.Join(strings.Split(strings.TrimSpace(csa.InitialState2(state)), "\n"), "/"))
+
+	if err := renderTemplate(w, "answer", map[string]string{
+		"answer": strings.Join(answer, " "),
+	}); err != nil {
+		log.Errorf(ctx, "failed to render template: %v", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
-	html := `<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<title>詰将棋BOT</title>
-  </head>
-  <body>
-    <p>` + fmt.Sprintf("正解は、 %s です！", strings.Join(answer, " ")) + `</p>
-    <img style="max-width: 100%;" src="` + answerImageURL + `">
-  </body>
-</html>`
-	w.Header().Add("Content-Type", "text/html; charset=utf-8")
-	w.Write([]byte(html))
 }
 
 func generateAnswer(problem *entity.Problem) ([]string, *shogi.State, error) {

@@ -25,7 +25,6 @@ type Problem struct {
 	Used      bool      `datastore:"used"`
 	QImage    string    `datastore:"q_image,noindex"`
 	AImage    string    `datastore:"a_image,noindex"`
-	AImage2   string    `datastore:"a_image_2,noindex"`
 	Score     int       `datastore:"score"`
 	CreatedAt time.Time `datastore:"created_at"`
 	UpdatedAt time.Time `datastore:"updated_at"`
@@ -33,7 +32,7 @@ type Problem struct {
 
 // Delete method
 func (p *Problem) Delete(ctx context.Context, key *datastore.Key) error {
-	for _, imageURL := range []string{p.QImage, p.AImage, p.AImage2} {
+	for _, imageURL := range []string{p.QImage, p.AImage} {
 		if imageURL == "" {
 			continue
 		}

@@ -5,7 +5,6 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
-	"image/gif"
 	"image/png"
 	"io"
 	"log"
@@ -90,7 +89,7 @@ func (pg *problemGenerator) generateProblem(ctx context.Context, problemType gen
 	}
 
 	// generate image
-	var qImage, aImage, aImage2 string
+	var qImage, aImage string
 	{
 		var b io.Reader
 		s := q.Clone()
@@ -114,16 +113,6 @@ func (pg *problemGenerator) generateProblem(ctx context.Context, problemType gen
 			return err
 		}
 	}
-	{
-		b, err := generateGIF(q, a)
-		if err != nil {
-			return err
-		}
-		aImage2, err = pg.uploadImage(ctx, b, "gif")
-		if err != nil {
-			return err
-		}
-	}
 	// save
 	problem := &entity.Problem{
 		CSA: record.ConvertToString(csa.NewConverter(&csa.ConvertOption{
@@ -133,7 +122,6 @@ func (pg *problemGenerator) generateProblem(ctx context.Context, problemType gen
 		Used:      false,
 		QImage:    qImage,
 		AImage:    aImage,
-		AImage2:   aImage2,
 		Score:     score,
 		CreatedAt: time.Now(),
 	}
@@ -219,18 +207,6 @@ func generatePNG(state *shogi.State, highlight *shogi.Position) (io.Reader, erro
 	}
 	buf := bytes.NewBuffer(nil)
 	if err := png.Encode(buf, img); err != nil {
-		return nil, err
-	}
-	return buf, nil
-}
-
-func generateGIF(state *shogi.State, moves []*shogi.Move) (io.Reader, error) {
-	g, err := image.GenerateGIF(state, moves, nil)
-	if err != nil {
-		return nil, err
-	}
-	buf := bytes.NewBuffer(nil)
-	if err := gif.EncodeAll(buf, g); err != nil {
 		return nil, err
 	}
 	return buf, nil

@@ -1,0 +1,22 @@
+body {
+    padding: 0 20px;
+}
+
+body .pure-g {
+    font-family: 'Hiragino Maru Gothic Pro', 'ヒラギノ丸ゴ Pro W3', 'Lucida Grande', Verdana, 'MS Pゴシック', sans-serif;
+    font-size: small;
+}
+
+.kifuforjs table.ban th {
+    padding-left: .3em;
+}
+
+.kifuforjs ul.inline input,
+.kifuforjs ul.inline button,
+.kifuforjs ul.inline.tools button {
+    font-size: small;
+}
+
+.kifuforjs .lines, .comment {
+    display: none;
+}

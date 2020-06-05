@@ -10,7 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "acorn": "^7.2.0",
     "kifu-for-js": "^1.2.1",
+    "lodash": ">=4.17.12",
+    "lodash-es": ">=4.17.14",
+    "minimist": ">=0.2.1",
     "purecss": "^1.0.0"
   }
 }
